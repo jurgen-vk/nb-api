@@ -1,7 +1,9 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +16,25 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return $request->user();
+// I didn't make a controller for this, because this is the only thing I need to do for this part. If I needed to do more than I would've.
+Route::get('/gen-token/{username}', function($username) {
+    $user = User::where('name', $username)->first();
+    $user->tokens()->delete();
+    $token = $user->createToken('api-token');
+    $token_text = $token->plainTextToken;
+    $stripped_token = Str::replaceFirst('|', '', $token_text);
+    return response()
+        ->json([
+            'username' => "$user->name",
+            'api-token' => $stripped_token,
+        ]);
 });
+
+//Route::middleware(['auth:sanctum'])->group(function() {
+//    Route::get('/api-token/{user}', function($user) {
+//
+//    });
+//});
+
+
+

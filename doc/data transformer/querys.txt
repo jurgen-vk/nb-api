@@ -1,0 +1,24 @@
+Insert the transformed data into the database.
+
+LOAD DATA INFILE 'C:\\Users\\PC\\Desktop\\csv formatter\\output.txt'
+INTO TABLE bears
+FIELDS TERMINATED BY ';'
+LINES TERMINATED BY '\n'
+(bear, city, province, @coords)
+SET coords = ST_GEOMFROMTEXT(@coords);
+
+
+
+retrieving records in a certain radius in km based on coords:
+
+select
+  bear
+from
+  bears
+where
+  (
+    ST_Distance_Sphere(
+      coords,
+      Point(51.734367, 5.135854)
+    ) *.0001
+  ) <= 1;  
