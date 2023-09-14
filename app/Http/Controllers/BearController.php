@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Bear;
 use Illuminate\Http\Request;
 
 class BearController extends Controller
@@ -11,15 +12,11 @@ class BearController extends Controller
      */
     public function index()
     {
-        //
-    }
+        $bears = Bear::all();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return response()->json([
+            'data' => $bears,
+        ]);
     }
 
     /**
@@ -35,15 +32,13 @@ class BearController extends Controller
      */
     public function show(string $id)
     {
-        //
-    }
+        $bear = Bear::findOrFail($id);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+        $bear = get_object_vars($bear->location);
+
+        return response()->json([
+            'data' => $bear,
+        ]);
     }
 
     /**

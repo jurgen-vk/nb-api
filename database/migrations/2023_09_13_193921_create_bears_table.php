@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('bear');
             $table->string('city');
             $table->string('province');
-            $table->point('coords')->spatialIndex();
+            $table->point('location')->spatialIndex();
             $table->timestamps();
         });
     }

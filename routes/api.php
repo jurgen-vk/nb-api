@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BearController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -26,15 +27,11 @@ Route::get('/gen-token/{username}', function($username) {
     return response()
         ->json([
             'username' => "$user->name",
-            'api-token' => $stripped_token,
+            'api-token' => $token_text,
         ]);
 });
 
-//Route::middleware(['auth:sanctum'])->group(function() {
-//    Route::get('/api-token/{user}', function($user) {
-//
-//    });
-//});
-
-
+Route::middleware(['auth:sanctum'])->group(function() {
+    Route::apiResource('bears', BearController::class);
+});
 

@@ -25,7 +25,7 @@ SET time_zone = "+00:00";
 -- Dumping data for table `bears`
 --
 
-INSERT INTO `bears` (`id`, `bear`, `city`, `province`, `coords`) VALUES
+INSERT INTO `bears` (`id`, `bear`, `city`, `province`, `location`) VALUES
 (1, 'NoBears Heusden', 'Heusden', 'Noord-Brabant', 0x0000000001010000007d21e4bcffdd4940861f9c4f1d8b1440),
 (2, 'NoBears Utrecht', 'Utrecht', 'Utrecht', 0x000000000101000000373811fdda004a40dd257156442d1440),
 (3, 'Akakabuto', 'Hoek', 'Zeeland', 0x0000000001010000005b311290e5a749402276018aec3e0e40),
@@ -532,7 +532,7 @@ INSERT INTO `bears` (`id`, `bear`, `city`, `province`, `coords`) VALUES
 (504, 'Cenela', 'Sommelsdijk', 'Zuid-Holland', 0x000000000101000000d1bea89322e04940f8bc87f0d4981040),
 (505, 'Chai', 'Dirksland', 'Zuid-Holland', 0x000000000101000000badbf5d214e04940cc39c2b34e5e1040),
 (506, 'Chance', 'Melissant', 'Zuid-Holland', 0x0000000001010000005006fd3b91e24940cfdc9e7b6a481040);
-INSERT INTO `bears` (`id`, `bear`, `city`, `province`, `coords`) VALUES
+INSERT INTO `bears` (`id`, `bear`, `city`, `province`, `location`) VALUES
 (507, 'Charcoal', 'Herkingen', 'Zuid-Holland', 0x000000000101000000057d337beada4940a8959dd9095a1040),
 (508, 'Charly', 'Stellendam', 'Zuid-Holland', 0x00000000010100000092ec6c23f9e74940daef3fe88f171040),
 (509, 'Cheeky', 'Goedereede', 'Zuid-Holland', 0x000000000101000000a3df089cb6e8494041f0f8f6aed10f40),

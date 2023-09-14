@@ -19,6 +19,19 @@ class Handler extends ExceptionHandler
     ];
 
     /**
+     * Determine if the exception handler response should be JSON.
+     * Overwritten to be always true because this laravel application is only used as api.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Throwable  $e
+     * @return bool
+     */
+    protected function shouldReturnJson($request, Throwable $e)
+    {
+        return true;
+    }
+
+    /**
      * Register the exception handling callbacks for the application.
      */
     public function register(): void
