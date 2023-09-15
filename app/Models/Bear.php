@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use MatanYadaev\EloquentSpatial\Objects\Point;
 use MatanYadaev\EloquentSpatial\Traits\HasSpatial;
 use Illuminate\Database\Eloquent\Builder;
+use AnthonyMartin\GeoLocation\GeoPoint;
+use Mockery\Exception;
 
 class Bear extends Model
 {
@@ -42,32 +45,44 @@ class Bear extends Model
      *
      * @param int $radius_in_km
      */
-    public function scopeInRadius(Builder $query, $location, $radius_in_km){
-        $box = boundingBox(
-            latitude: $location->latitude,
-            longitude: $location->longitude,
-            radius_in_km: $radius_in_km
-        );
+    public function scopeInRadius(Builder $query, $location, $radius_in_km)
+    {
 
-        $radius_in_m = $radius_in_km * 1000;
+        //making a rough bounding box
+        $geopoint = new geoPoint($location->latitude, $location->longitude);
+        $box = $geopoint->boundingBox($radius_in_km, 'km');
 
-        $query->whereRaw('
+        $query->select(
+            "*",
+            DB::raw("
+                ROUND(
+                    ST_DISTANCE_SPHERE(
+                        `location`,
+                        ST_GEOMFROMTEXT('
+                            POINT(
+                                {$location->latitude} {$location->longitude}
+                            )'
+                        )
+                    ) / 1000, 3
+                ) AS distance_in_km
+            ")
+        )->whereRaw('
             ST_CONTAINS(
                 ST_MAKEENVELOPE(
                     ST_GEOMFROMTEXT(?),
                     ST_GEOMFROMTEXT(?)
                 ),
-                location
+                `location`
             )', [
-                "POINT({$box->minLon} {$box->minLat})",
-                "POINT({$box->maxLon} {$box->maxLat})"
-            ]
-        )->whereRaw("
-            ST_DISTANCE_SPHERE(
-                location,
-                ST_GEOMFROMTEXT(?)
-            ) <= {$radius_in_m}", [
-                "POINT({$box->maxLon} {$box->maxLat})"
-        ]);
+            "POINT({$box->getMinLatitude()} {$box->getMinLongitude()})",
+            "POINT( {$box->getMaxLatitude()} {$box->getMaxLongitude()})"
+        ])->whereRaw('
+                ST_DISTANCE_SPHERE(
+                    `location`,
+                    ST_GEOMFROMTEXT(?)
+                ) <= ?', [
+            "POINT({$location->latitude} {$location->longitude})",
+            $radius_in_km * 1000 // Convert the distance to meters
+        ])->orderBy('distance_in_km');
     }
 }

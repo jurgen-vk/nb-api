@@ -14,23 +14,17 @@ class BearController extends Controller
      */
     public function index(Request $request)
     {
-        DB::connection()->enableQueryLog();
-
         // Filters
-        $radius = $request->radius;
-        $latitude = $request->latitude;
-        $longitude = $request->longitude;
+        $rad = $request->radius;
+        $lat = $request->latitude;
+        $lon = $request->longitude;
 
-        if(are_filled($radius, $latitude, $longitude)){
-            $location = new Point($latitude, $longitude);
-            $bears = Bear::inRadius($location, $radius)->get();
+        if(are_filled($rad, $lat, $lon)){
+            $location = new Point($lat, $lon);
+            $bears = Bear::inRadius($location, $rad)->get();
         } else {
             $bears = Bear::all();
         }
-
-        $queries = DB::getQueryLog();
-
-        logger($queries);
 
         return response()->json([
             'data' => $bears,

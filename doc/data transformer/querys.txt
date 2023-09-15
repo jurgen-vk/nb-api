@@ -22,3 +22,46 @@ where
       Point(51.734367, 5.135854)
     ) *.0001
   ) <= 1;  
+
+
+
+optimized_1
+
+select
+  bear
+from
+  bears
+where
+  (
+    ST_Distance_Sphere(
+      coords,
+      Point(51.734367, 5.135854)
+    )
+  ) <= 1000;  
+
+
+
+$query->whereRaw('
+            ST_CONTAINS(
+                ST_MAKEENVELOPE(
+                    ST_GEOMFROMTEXT(?),
+                    ST_GEOMFROMTEXT(?)
+                ),
+                location
+            )', [
+                "POINT({$box->getMinLatitude()} {$box->getMinLongitude()})",
+                "POINT( {$box->getMaxLatitude()} {$box->getMaxLongitude()})"
+            ]
+        )->whereRaw("
+            ST_DISTANCE_SPHERE(
+                location,
+                ST_GEOMFROMTEXT(?)
+            ) <= {$radius_in_km * 1000}", [
+                "POINT({$location->latitude} {$location->longitude})"
+        ]);
+
+
+
+
+
+
