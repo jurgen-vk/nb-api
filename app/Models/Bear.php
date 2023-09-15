@@ -49,13 +49,25 @@ class Bear extends Model
             radius_in_km: $radius_in_km
         );
 
+        $radius_in_m = $radius_in_km * 1000;
+
         $query->whereRaw('
-            ST_CONTAINS(ST_MAKE_ENVELOPE(POINT(?, ?), POINT(?, ?)),location)', [
-                $box->minLon,
-                $box->minLat,
-                $box->maxLon,
-                $box->maxLat,
+            ST_CONTAINS(
+                ST_MAKEENVELOPE(
+                    ST_GEOMFROMTEXT(?),
+                    ST_GEOMFROMTEXT(?)
+                ),
+                location
+            )', [
+                "POINT({$box->minLon} {$box->minLat})",
+                "POINT({$box->maxLon} {$box->maxLat})"
             ]
-        );
+        )->whereRaw("
+            ST_DISTANCE_SPHERE(
+                location,
+                ST_GEOMFROMTEXT(?)
+            ) <= {$radius_in_m}", [
+                "POINT({$box->maxLon} {$box->maxLat})"
+        ]);
     }
 }
