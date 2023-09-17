@@ -67,7 +67,7 @@ Route::middleware(['auth:sanctum'])->group(function() {
     // ======[ API Log ]============================================================================
 
     // too simple to make a whole controller
-    route::get('/apilogs', function() {
+    route::get('/log', function() {
         $limit = request('limit');
         if(!empty($limit)) {
             $apilog = ApiLog::orderBy('created_at', 'desc')->limit($limit)->get();
