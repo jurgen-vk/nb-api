@@ -3,6 +3,7 @@
 namespace App\Http\Traits;
 
 use App\Models\Bear;
+use App\Rules\CollectionArrayRule;
 use App\Rules\LatitudeRule;
 use App\Rules\LongitudeRule;
 use Illuminate\Support\Facades\Validator;
@@ -14,11 +15,13 @@ Trait BearTrait {
     /**
      * Validate a bear.
      *
-     * @param \Illuminate\Support\Collection|array $data single bear to be validated.
-     * @throws ValidationException
-     * @return void Doesn't have to return anything when validated, will send json response on error.
+     * @param array $data single bear to be validated.
+     * @return void
+     *@throws ValidationException
      */
-    public function validateBear(\Illuminate\Support\Collection|array $data) : void {
+    public function validateBear(array $data) : void
+    {
+        //custom validation rules
         $latitude = new LatitudeRule();
         $longitude = new LongitudeRule();
 
@@ -38,6 +41,10 @@ Trait BearTrait {
      * @return bool|\Illuminate\Http\JsonResponse Inserted bear.
      */
     public function insertBear(\Illuminate\Support\Collection|array $data) : Bear|\Illuminate\Http\JsonResponse {
+        if(gettype($data) != 'object') {
+            $data = collect($data);
+        }
+
         $bear = new Bear;
         $bear->bear = $data->get('bear');
         $bear->city = $data->get('city');
@@ -56,6 +63,10 @@ Trait BearTrait {
      * @return bool|\Illuminate\Http\JsonResponse Updated bear.
      */
     public function changeBear(Bear $bear, \Illuminate\Support\Collection|array $data) : Bear|\Illuminate\Http\JsonResponse {
+        if(gettype($data) != 'object') {
+            $data = collect($data);
+        }
+
         $bear->bear = $data->get('bear');
         $bear->city = $data->get('city');
         $bear->province = $data->get('province');

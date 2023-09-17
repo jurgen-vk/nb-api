@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\ApiLog;
+use App\Models\AuthLog;
 
 if(!function_exists('are_filled')) {
     /**
@@ -115,15 +116,12 @@ if(!function_exists('apilog')) {
      * @param string $action action that the user did (create, read, update, delete)
      * @return void
      */
-    function apilog(int|string $user_id, int|string $bear_id, string $action, array $metadata = null) : void {
-
-        $metadata = $metadata ?: json_encode($metadata);
+    function apilog(int|string $user_id, int|string|null $bear_id, string $action) : void {
 
         $apilog = new ApiLog;
         $apilog->user_id = $user_id;
         $apilog->bear_id = $bear_id;
         $apilog->action = $action;
-        $apilog->metadata = $metadata;
         $apilog->save();
     }
 }

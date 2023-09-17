@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('apilog', function (Blueprint $table) {
+        Schema::create('api_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id');
             $table->foreignId('bear_id')->nullable();
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('apilog');
+        Schema::dropIfExists('api_logs');
     }
 };

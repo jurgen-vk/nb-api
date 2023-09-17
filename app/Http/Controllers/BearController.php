@@ -42,7 +42,7 @@ class BearController extends Controller
     public function store(Request $request) : \Illuminate\Http\JsonResponse
     {
         $data = collect($request->json());
-        $this->validateBear($data);
+        $this->validateBear($data->all());
         $newBear = $this->insertBear($data);
 
         apilog(Auth::id(), $newBear->id, 'Create');
@@ -64,7 +64,7 @@ class BearController extends Controller
     public function update(Bear $bear, Request $request) : \Illuminate\Http\JsonResponse
     {
         $data = collect($request->json());
-        $this->validateBear($data);
+        $this->validateBear($data->all());
         $changedBear = $this->changeBear($bear, $data);
 
         apilog(Auth::id(), $changedBear->id, 'Update');
@@ -90,7 +90,7 @@ class BearController extends Controller
         return response()->json([
             'message' => 'Bear successfully deleted',
             'data' => $bear,
-        ], 204);
+        ], 200); // chose 200 instead of 204 because i want to show which resource was deleted back to the client
     }
 
 
@@ -193,12 +193,15 @@ class BearController extends Controller
      * @param array $ids array with ids of bears to delete
      * @return \Illuminate\Http\JsonResponse
      */
-    public function remove(array $ids) : \Illuminate\Http\JsonResponse
+    public function remove(Request $request) : \Illuminate\Http\JsonResponse
     {
         $deletedBears = [];
 
-        foreach($ids as $id) {
-            $bear = Bear::firstOrFail($id);
+        $data = collect($request->json());
+
+        foreach($data->get('ids') as $id) {
+            logger($id);
+            $bear = Bear::findOrFail($id);
             $deletedBears[] = $bear;
             $bear->delete();
 
@@ -208,6 +211,6 @@ class BearController extends Controller
         return response()->json([
             'message' => 'Bears successfully deleted',
             'data' => $deletedBears,
-        ], 204);
+        ], 200); // chose 200 instead of 204 because i want to show which resource was deleted back to the client
     }
 }
