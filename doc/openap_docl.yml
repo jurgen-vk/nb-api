@@ -1,0 +1,1104 @@
+openapi: 3.0.3
+info:
+  title: NoBears API
+  description:
+    This is the api example for NoBears
+  version: 1.0.0
+tags:
+  - name: bear
+    description: A bear
+  - name: bears
+    description: Multiple bears
+  - name: gen token
+    description: Generate token for authentication
+  - name: log
+    description: See logs
+paths:
+  /gen-token/{username}:
+    get:
+      tags:
+        - gen token
+      description: Generate an API token for a user
+      operationId: generateAPIToken
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: The username of the user for whom the API token should be generated.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: API token generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                    description: The username for which the API token was generated.
+                  api-token:
+                    type: string
+                    description: The generated API token.
+              example:
+                username: NoBears
+                api-token: "2|LhCqGH1QcPU6MnxLA44RNdMqkKdTiKHGXgAAwxkP0e542ea7"
+  /bear:
+    post:
+      tags:
+        - bear
+      description: Add a new pet to the store
+      operationId: createBear
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: Create a new pet in the store
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                bear:
+                  type: string
+                  description: Name of a business
+                city:
+                  type: string
+                  description: Name of a city
+                province:
+                  type: string
+                  description: Name of a province
+                location:
+                  type: object
+                  properties:
+                    latitude:
+                      type: number
+                      description: Latitude coordinate
+                    longitude:
+                      type: number
+                      description: Longitude coordinate
+                  required:
+                    - latitude
+                    - longitude
+              required:
+                - bear
+                - city
+                - province
+                - location
+              example:
+                bear: NoBears Heusden
+                city: Heusden
+                province: Noord-Brabant
+                location:
+                  latitude: 51.734367
+                  longitude: 5.135854
+      responses:
+        '201':
+          description: Bear successfully created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: A message indicating the success of the operation.
+                  data:
+                    type: object
+                    properties:
+                      bear:
+                        type: string
+                        description: Name of a business.
+                      city:
+                        type: string
+                        description: Name of a city.
+                      province:
+                        type: string
+                        description: Name of a province.
+                      location:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            description: The type of location data (e.g., "Point").
+                          coordinates:
+                            type: array
+                            items:
+                              type: number
+                            description: An array containing latitude and longitude coordinates.
+                            example: [13.292761, 1.2392394]
+                      updated_at:
+                        type: string
+                        format: date-time
+                        description: The date and time when the bear was last updated.
+                      created_at:
+                        type: string
+                        format: date-time
+                        description: The date and time when the bear was created.
+                      id:
+                        type: integer
+                        format: int64
+                        description: The unique identifier for the bear.
+                    required:
+                      - bear
+                      - city
+                      - province
+                      - location
+                      - updated_at
+                      - created_at
+                      - id
+              example:
+                message: Bear successfully created
+                data:
+                  bear: name of a business
+                  city: name of a city
+                  province: name of a province
+                  location:
+                    type: Point
+                    coordinates: [13.292761, 1.2392394]
+                  updated_at: '2023-09-17T20:33:33.000000Z'
+                  created_at: '2023-09-17T20:33:33.000000Z'
+                  id: 641
+  /bear/{bear}:
+    get:
+      tags:
+        - bear
+      description: Get information about a specific bear
+      operationId: readBear
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: bear
+          in: path
+          required: true
+          description: The ID or name of the bear to retrieve
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Bear successfully located
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: A message indicating the success of the operation.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int64
+                        description: The unique identifier for the bear.
+                      bear:
+                        type: string
+                        description: Name of a business.
+                      city:
+                        type: string
+                        description: Name of a city.
+                      province:
+                        type: string
+                        description: Name of a province.
+                      location:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            description: The type of location data (e.g., "Point").
+                          coordinates:
+                            type: array
+                            items:
+                              type: number
+                            description: An array containing latitude and longitude coordinates.
+                            example: [51.734367, 5.135854]
+                      created_at:
+                        type: string
+                        format: date-time
+                        description: The date and time when the bear was created.
+                      updated_at:
+                        type: string
+                        format: date-time
+                        description: The date and time when the bear was last updated.
+                      deleted_at:
+                        type: string
+                        description: The date and time when the bear was deleted, if applicable.
+                    required:
+                      - id
+                      - bear
+                      - city
+                      - province
+                      - location
+                      - created_at
+                      - updated_at
+              example:
+                message: Bear successfully located
+                data:
+                id: 1
+                bear: NoBears Heusden
+                city: Heusden
+                province: Noord-Brabant
+                location:
+                  type: Point
+                  coordinates: [51.734367, 5.135854]
+                created_at: '2023-09-17T17:26:28.000000Z'
+                updated_at: '2023-09-17T17:26:28.000000Z'
+                deleted_at: null
+        '404':
+          description: Bear not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: A message indicating the failure to find the bear.
+              example:
+                message: No query results for model [App\\Models\\Bear] 34534
+    put:
+      tags:
+        - bear
+      description: Update information about a specific bear
+      operationId: updateBear
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: bear
+          in: path
+          required: true
+          description: The ID or name of the bear to update
+          schema:
+            type: string
+      requestBody:
+        description: Update information for the bear
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                bear:
+                  type: string
+                  description: Name of a business.
+                city:
+                  type: string
+                  description: Name of a city.
+                province:
+                  type: string
+                  description: Name of a province.
+                location:
+                  type: object
+                  properties:
+                    latitude:
+                      type: number
+                      description: Latitude coordinate.
+                    longitude:
+                      type: number
+                      description: Longitude coordinate.
+                  required:
+                    - latitude
+                    - longitude
+              required:
+                - bear
+                - city
+                - province
+                - location
+            example:
+              bear: NoBears Heusden
+              city: Heusden
+              province: Noord-Brabant
+              location:
+                latitude: 51.734367
+                longitude: 5.135854
+      responses:
+        '200':
+          description: Bear successfully updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: A message indicating the success of the operation.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int64
+                        description: The unique identifier for the bear.
+                      bear:
+                        type: string
+                        description: Name of a business.
+                      city:
+                        type: string
+                        description: Name of a city.
+                      province:
+                        type: string
+                        description: Name of a province.
+                      location:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            description: The type of location data (e.g., "Point").
+                          coordinates:
+                            type: array
+                            items:
+                              type: number
+                            description: An array containing latitude and longitude coordinates.
+                            example: [13.292761, 1.2392394]
+                      created_at:
+                        type: string
+                        format: date-time
+                        description: The date and time when the bear was created.
+                      updated_at:
+                        type: string
+                        format: date-time
+                        description: The date and time when the bear was last updated.
+                      deleted_at:
+                        type: string
+                        description: The date and time when the bear was deleted, if applicable.
+                    required:
+                      - id
+                      - bear
+                      - city
+                      - province
+                      - location
+                      - created_at
+                      - updated_at
+              example:
+                message: Bear successfully updated
+                data:
+                  id: 641
+                  bear: name of a business
+                  city: name of a city
+                  province: name of a province
+                  location:
+                    type: Point
+                    coordinates: [13.292761, 1.2392394]
+                  created_at: '2023-09-17T20:33:33.000000Z'
+                  updated_at: '2023-09-17T21:36:25.000000Z'
+                  deleted_at: '2023-09-17T21:36:25.000000Z'
+    delete:
+      tags:
+        - bear
+      description: Delete a specific bear
+      operationId: deleteBear
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: bear
+          in: path
+          required: true
+          description: The ID or name of the bear to delete
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Bear successfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: A message indicating the success of the operation.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int64
+                        description: The unique identifier for the deleted bear.
+                      bear:
+                        type: string
+                        description: Name of a business.
+                      city:
+                        type: string
+                        description: Name of a city.
+                      province:
+                        type: string
+                        description: Name of a province.
+                      location:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            description: The type of location data (e.g., "Point").
+                          coordinates:
+                            type: array
+                            items:
+                              type: number
+                            description: An array containing latitude and longitude coordinates.
+                            example: [13.292761, 1.2392394]
+                      created_at:
+                        type: string
+                        format: date-time
+                        description: The date and time when the bear was created.
+                      updated_at:
+                        type: string
+                        format: date-time
+                        description: The date and time when the bear was last updated.
+                      deleted_at:
+                        type: string
+                        format: date-time
+                        description: The date and time when the bear was deleted.
+                    required:
+                      - id
+                      - bear
+                      - city
+                      - province
+                      - location
+                      - created_at
+                      - updated_at
+                      - deleted_at
+              example:
+                message: Bear successfully deleted
+                data:
+                  id: 641
+                  bear: name of a business
+                  city: name of a city
+                  province: name of a province
+                  location:
+                    type: Point
+                    coordinates: [13.292761, 1.2392394]
+                  created_at: '2023-09-17T20:33:33.000000Z'
+                  updated_at: '2023-09-17T21:36:25.000000Z'
+                  deleted_at: '2023-09-17T21:36:25.000000Z'
+        '404':
+          description: Bear not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: A message indicating the failure to find the bear.
+              example:
+                message: No query results for model [App\\Models\\Bear] 641234
+  /bears:
+    get:
+      tags:
+        - bears
+      description: Get information about all bears within a specified radius
+      operationId: CreateBears
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: latitude
+          in: query
+          required: false
+          description: Latitude coordinate to filter bears by location.
+          schema:
+            type: number
+            example: 51.734367
+        - name: longitude
+          in: query
+          required: false
+          description: Longitude coordinate to filter bears by location.
+          schema:
+            type: number
+            example: 5.135854
+        - name: radius
+          in: query
+          required: false
+          description: Radius in kilometers for location filtering.
+          schema:
+            type: number
+            example: 10
+      responses:
+        '200':
+          description: Bears successfully located
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: A message indicating the success of the operation.
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          format: int64
+                          description: The unique identifier for the bear.
+                        bear:
+                          type: string
+                          description: Name of a business.
+                        city:
+                          type: string
+                          description: Name of a city.
+                        province:
+                          type: string
+                          description: Name of a province.
+                        location:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              description: The type of location data (e.g., "Point").
+                            coordinates:
+                              type: array
+                              items:
+                                type: number
+                              description: An array containing latitude and longitude coordinates.
+                              example: [51.734367, 5.135854]
+                        created_at:
+                          type: string
+                          format: date-time
+                          description: The date and time when the bear was created.
+                        updated_at:
+                          type: string
+                          format: date-time
+                          description: The date and time when the bear was last updated.
+                        deleted_at:
+                          type: string
+                          description: The date and time when the bear was deleted, if applicable.
+                        distance_in_km:
+                          type: number
+                          description: The distance in kilometers from the specified location (if provided).
+                required:
+                  - id
+                  - bear
+                  - city
+                  - province
+                  - location
+                  - created_at
+                  - updated_at
+                  - distance_in_km
+              example:
+                message: Bears successfully located
+                data:
+                  - id: 1
+                    bear: NoBears Heusden
+                    city: Heusden
+                    province: Noord-Brabant
+                    location:
+                      type: Point
+                      coordinates: [51.734367, 5.135854]
+                    created_at: '2023-09-17T17:26:28.000000Z'
+                    updated_at: '2023-09-17T17:26:28.000000Z'
+                    deleted_at: null
+                    distance_in_km: 0
+                  - id: 131
+                    bear: Dopey
+                    city: Elshout
+                    province: Noord-Brabant
+                    location:
+                      type: Point
+                      coordinates: [51.70193, 5.1421528]
+                    created_at: '2023-09-17T17:26:28.000000Z'
+                    updated_at: '2023-09-17T17:26:28.000000Z'
+                    deleted_at: null
+                    distance_in_km: 3.66
+                  - id: 138
+                    bear: Fuzzball
+                    city: Nieuwkuijk
+                    province: Noord-Brabant
+                    location:
+                      type: Point
+                      coordinates: [51.6903595, 5.1780672]
+                    created_at: '2023-09-17T17:26:28.000000Z'
+                    updated_at: '2023-09-17T17:26:28.000000Z'
+                    deleted_at: null
+                    distance_in_km: 6.766
+                  - id: 139
+                    bear: Fuzzy Wuzzy
+                    city: Haarsteeg
+                    province: Noord-Brabant
+                    location:
+                      type: Point
+                      coordinates: [51.7102766, 5.1984482]
+                    created_at: '2023-09-17T17:26:28.000000Z'
+                    updated_at: '2023-09-17T17:26:28.000000Z'
+                    deleted_at: null
+                    distance_in_km: 7.454
+        '404':
+          description: Bear not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: A message indicating the failure to find the bear.
+              example:
+                message: No query results for model [App\\Models\\Bear] 641234
+    post:
+      tags:
+        - bears
+      description: Create multiple new bears
+      operationId: createBears
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: List of bears to create
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  bear:
+                    type: string
+                    description: Name of a business.
+                  city:
+                    type: string
+                    description: Name of a city.
+                  province:
+                    type: string
+                    description: Name of a province.
+                  location:
+                    type: object
+                    properties:
+                      latitude:
+                        type: number
+                        description: Latitude coordinate.
+                      longitude:
+                        type: number
+                        description: Longitude coordinate.
+                    required:
+                      - latitude
+                      - longitude
+                required:
+                  - bear
+                  - city
+                  - province
+                  - location
+            example:
+              - bear: name of a business
+                city: name of a city
+                province: name of a province
+                location:
+                  latitude: 1.8765246
+                  longitude: 13.2334632
+              - bear: name of another business
+                city: name of another city
+                province: name of another province
+                location:
+                  latitude: 1.7237244
+                  longitude: 13.3456344
+      responses:
+        '201':
+          description: Bears successfully created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: A message indicating the success of the operation.
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        bear:
+                          type: string
+                          description: Name of a business.
+                        city:
+                          type: string
+                          description: Name of a city.
+                        province:
+                          type: string
+                          description: Name of a province.
+                        location:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              description: The type of location data (e.g., "Point").
+                            coordinates:
+                              type: array
+                              items:
+                                type: number
+                              description: An array containing latitude and longitude coordinates.
+                        updated_at:
+                          type: string
+                          format: date-time
+                          description: The date and time when the bear was last updated.
+                        created_at:
+                          type: string
+                          format: date-time
+                          description: The date and time when the bear was created.
+                        id:
+                          type: integer
+                          format: int64
+                          description: The unique identifier for the bear.
+                      required:
+                        - bear
+                        - city
+                        - province
+                        - location
+                        - updated_at
+                        - created_at
+                        - id
+              example:
+                message: Bears successfully created
+                data:
+                  - bear: name of a business
+                    city: name of a city
+                    province: name of a province
+                    location:
+                      type: Point
+                      coordinates: [13.2334632, 1.8765246]
+                    updated_at: '2023-09-17T22:23:15.000000Z'
+                    created_at: '2023-09-17T22:23:15.000000Z'
+                    id: 642
+                  - bear: name of another business
+                    city: name of another city
+                    province: name of another province
+                    location:
+                      type: Point
+                      coordinates: [13.3456344, 1.7237244]
+                    updated_at: '2023-09-17T22:23:15.000000Z'
+                    created_at: '2023-09-17T22:23:15.000000Z'
+                    id: 643
+    put:
+      tags:
+        - bears
+      description: Modify multiple bears
+      operationId: updateBears
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: List of bears to modify
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int64
+                    description: The unique identifier for the bear to modify.
+                  bear:
+                    type: string
+                    description: Name of a business update.
+                  city:
+                    type: string
+                    description: Name of a city update.
+                  province:
+                    type: string
+                    description: Name of a province update.
+                  location:
+                    type: object
+                    properties:
+                      latitude:
+                        type: number
+                        description: Latitude coordinate.
+                      longitude:
+                        type: number
+                        description: Longitude coordinate.
+                    required:
+                      - latitude
+                      - longitude
+                required:
+                  - id
+                  - bear
+                  - city
+                  - province
+                  - location
+            example:
+              - id: 642
+                bear: name of a business update
+                city: name of a city update
+                province: name of a province update
+                location:
+                  latitude: 1.8765246
+                  longitude: 13.2334632
+              - id: 643
+                bear: name of another business update
+                city: name of another city update
+                province: name of another province update
+                location:
+                  latitude: 1.7237244
+                  longitude: 13.3456344
+      responses:
+        '200':
+          description: Bears successfully updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: A message indicating the success of the operation.
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          format: int64
+                          description: The unique identifier for the updated bear.
+                        bear:
+                          type: string
+                          description: Name of a business update.
+                        city:
+                          type: string
+                          description: Name of a city update.
+                        province:
+                          type: string
+                          description: Name of a province update.
+                        location:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              description: The type of location data (e.g., "Point").
+                            coordinates:
+                              type: array
+                              items:
+                                type: number
+                              description: An array containing latitude and longitude coordinates.
+                        updated_at:
+                          type: string
+                          format: date-time
+                          description: The date and time when the bear was last updated.
+                        created_at:
+                          type: string
+                          format: date-time
+                          description: The date and time when the bear was created.
+                        deleted_at:
+                          type: string
+                          description: The date and time when the bear was deleted, if applicable.
+                      required:
+                        - id
+                        - bear
+                        - city
+                        - province
+                        - location
+                        - updated_at
+                        - created_at
+              example:
+                - id: 642
+                  bear: name of a business update
+                  city: name of a city update
+                  province: name of a province update
+                  location:
+                    type: Point
+                    coordinates: [13.2334632, 1.8765246]
+                  updated_at: '2023-09-17T22:33:48.000000Z'
+                  created_at: '2023-09-17T22:23:15.000000Z'
+                  deleted_at: null
+                - id: 643
+                  bear: name of another business update
+                  city: name of another city update
+                  province: name of another province update
+                  location:
+                    type: Point
+                    coordinates: [13.3456344, 1.7237244]
+                  updated_at: '2023-09-17T22:33:48.000000Z'
+                  created_at: '2023-09-17T22:23:15.000000Z'
+                  deleted_at: null
+    delete:
+      tags:
+        - bears
+      description: Remove multiple bears
+      operationId: removeMultipleBears
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: List of bear IDs to remove
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: integer
+                    format: int64
+                    description: The unique identifiers for the bears to remove.
+              required:
+                - ids
+            example:
+              ids: [642, 643]
+      responses:
+        '200':
+          description: Bears successfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: A message indicating the success of the operation.
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          format: int64
+                          description: The unique identifier for the deleted bear.
+                        bear:
+                          type: string
+                          description: Name of a business update.
+                        city:
+                          type: string
+                          description: Name of a city update.
+                        province:
+                          type: string
+                          description: Name of a province update.
+                        location:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              description: The type of location data (e.g., "Point").
+                            coordinates:
+                              type: array
+                              items:
+                                type: number
+                              description: An array containing latitude and longitude coordinates.
+                        created_at:
+                          type: string
+                          format: date-time
+                          description: The date and time when the bear was created.
+                        updated_at:
+                          type: string
+                          format: date-time
+                          description: The date and time when the bear was last updated.
+                        deleted_at:
+                          type: string
+                          format: date-time
+                          description: The date and time when the bear was deleted.
+                      required:
+                        - id
+                        - bear
+                        - city
+                        - province
+                        - location
+                        - created_at
+                        - updated_at
+                        - deleted_at
+                example:
+                  message: Bears successfully deleted
+                  data:
+                    - id: 642
+                      bear: name of a business update
+                      city: name of a city update
+                      province: name of a province update
+                      location:
+                        type: Point
+                        coordinates: [13.2334632, 1.8765246]
+                      created_at: '2023-09-17T22:23:15.000000Z'
+                      updated_at: '2023-09-17T22:38:55.000000Z'
+                      deleted_at: '2023-09-17T22:38:55.000000Z'
+                    - id: 643
+                      bear: name of another business update
+                      city: name of another city update
+                      province: name of another province update
+                      location:
+                        type: Point
+                        coordinates: [13.3456344, 1.7237244]
+                      created_at: '2023-09-17T22:23:15.000000Z'
+                      updated_at: '2023-09-17T22:38:55.000000Z'
+                      deleted_at: '2023-09-17T22:38:55.000000Z'
+  /log:
+    get:
+      tags:
+        - log
+      description: Get API logs
+      operationId: getAPILogs
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          description: The maximum number of API logs to retrieve (optional).
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: API logs retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      format: int64
+                      description: The unique identifier for the API log.
+                    user_id:
+                      type: integer
+                      format: int64
+                      description: The user ID associated with the API log.
+                    bear_id:
+                      type: integer
+                      format: int64
+                      description: The bear ID associated with the API log.
+                    action:
+                      type: string
+                      description: The action performed in the API log.
+                    created_at:
+                      type: string
+                      format: date-time
+                      description: The date and time when the API log was created.
+                    updated_at:
+                      type: string
+                      format: date-time
+                      description: The date and time when the API log was last updated.
+                    deleted_at:
+                      type: string
+                      format: date-time
+                      description: The date and time when the API log was deleted, if applicable.
+                  required:
+                  - id
+                  - user_id
+                  - bear_id
+                  - action
+                  - created_at
+                  - updated_at
+                  - deleted_at
+              example:
+                - id: 13
+                  user_id: 1
+                  bear_id: 643
+                  action: Delete
+                  created_at: '2023-09-17T22:38:55.000000Z'
+                  updated_at: '2023-09-17T22:38:55.000000Z'
+                  deleted_at: null
+                - id: 12
+                  user_id: 1
+                  bear_id: 642
+                  action: Delete
+                  created_at: '2023-09-17T22:38:55.000000Z'
+                  updated_at: '2023-09-17T22:38:55.000000Z'
+                  deleted_at: null
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT  # Replace with your actual bearer token format, if different
