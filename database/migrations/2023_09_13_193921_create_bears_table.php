@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('province');
             $table->point('location')->spatialIndex();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

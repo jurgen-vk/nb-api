@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use MatanYadaev\EloquentSpatial\Objects\Point;
 use MatanYadaev\EloquentSpatial\Traits\HasSpatial;
@@ -11,9 +13,17 @@ use Illuminate\Database\Eloquent\Builder;
 use AnthonyMartin\GeoLocation\GeoPoint;
 use Mockery\Exception;
 
+/**
+ * Bear Model
+ *
+ * @property string bear Name of the location
+ * @property string city city in which the location is located
+ * @property string province province in which the location is located
+ * @property point location point type containing the latitude and longitude of the location
+ */
 class Bear extends Model
 {
-    use HasFactory,HasSpatial;
+    use HasFactory, HasSpatial, softDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -84,5 +94,9 @@ class Bear extends Model
             "POINT({$location->latitude} {$location->longitude})",
             $radius_in_km * 1000 // Convert the distance to meters
         ])->orderBy('distance_in_km');
+    }
+
+    public function ApiLog() : HasMany {
+        return $this->hasMany(ApiLog::class);
     }
 }

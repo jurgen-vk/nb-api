@@ -32,6 +32,25 @@ Route::get('/gen-token/{username}', function($username) {
 });
 
 Route::middleware(['auth:sanctum'])->group(function() {
-    Route::apiResource('bears', BearController::class);
+    // I chose to split them up instead of using apiResource.
+    // I want to bring a bit more logical structure to this than laravel by default provides.
+
+    // interacting with a single bear
+    // ID must be provided in the url when necessary.
+    Route::prefix('bear')->group(function () {
+        Route::get('/{bear}', [BearController::class, 'show']); // show one bear
+        Route::post('/', [BearController::class, 'store']); // make one new bear
+        Route::put('/{bear}', [BearController::class, 'update']); // update 1 bear
+        Route::delete('/{bear}', [BearController::class, 'delete']); // delete 1 bear
+    });
+
+    // interacting with multiple bears
+    // ID must be provided in json body when necessary.
+    Route::prefix('bears')->group(function () {
+        Route::get('/', [BearController::class, 'display']); // show all bears
+        Route::post('/', [BearController::class, 'create']); // make multiple new bears
+        Route::put('/', [BearController::class, 'modify']); // modify multiple bears
+        Route::delete('/', [BearController::class, 'remove']); // remove multiple bears
+    });
 });
 
