@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Bear;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use MatanYadaev\EloquentSpatial\Objects\Point;
 use App\Http\Traits\BearTrait;
@@ -200,7 +201,6 @@ class BearController extends Controller
         $data = collect($request->json());
 
         foreach($data->get('ids') as $id) {
-            logger($id);
             $bear = Bear::findOrFail($id);
             $deletedBears[] = $bear;
             $bear->delete();
